@@ -27,7 +27,7 @@ object DnsClass {
  */
 class DnsPacket {
     // Header fields
-    var id: Short = 0          // 16-bit identifier
+    var id: Short = 0          // 16-bit transaction identifier
     var flags: Short = 0       // Various flags
     var isResponse: Boolean    // Query or response
         get() = (flags.toInt() and 0x8000) != 0
@@ -40,6 +40,18 @@ class DnsPacket {
         }
 
     // Sections
+    // https://engineerhead.github.io/dns-server/dns-message-sections.html#dns-message-sections-part-1
+	// +---------------------+
+    // |        Header       |
+    // +---------------------+
+    // |       Question      | the question for the name server
+    // +---------------------+
+    // |        Answer       | RRs answering the question
+    // +---------------------+
+    // |      Authority      | RRs pointing toward an authority
+    // +---------------------+
+    // |      Additional     | RRs holding additional information
+    // +---------------------+
     val questions = mutableListOf<DnsQuestion>()
     val answers = mutableListOf<DnsResourceRecord>()
     val authority = mutableListOf<DnsResourceRecord>()
