@@ -89,7 +89,7 @@ class ZoneFileParserTest {
         assertEquals(2, records["NS"]?.size)
         val ns1 = records["NS"]?.get(0) as ResourceRecord
         assertEquals("@", ns1.name)
-        assertEquals("IN", ns1.`class`)
+        assertEquals("IN", ns1.recordClass)
         assertEquals("NS", ns1.type)
         assertEquals("ns1.example.com.", ns1.data)
     }
@@ -109,7 +109,7 @@ class ZoneFileParserTest {
         assertEquals(2, records["A"]?.size)
         val www = records["A"]?.get(0) as ResourceRecord
         assertEquals("www", www.name)
-        assertEquals("IN", www.`class`)
+        assertEquals("IN", www.recordClass)
         assertEquals("A", www.type)
         assertEquals("192.168.1.1", www.data)
     }
@@ -129,7 +129,7 @@ class ZoneFileParserTest {
         assertEquals(2, records["MX"]?.size)
         val mx1 = records["MX"]?.get(0) as ResourceRecord
         assertEquals("@", mx1.name)
-        assertEquals("IN", mx1.`class`)
+        assertEquals("IN", mx1.recordClass)
         assertEquals("MX", mx1.type)
         assertEquals("mail.example.com.", mx1.data)
         assertEquals("10", mx1.preference)
@@ -150,7 +150,7 @@ class ZoneFileParserTest {
         assertEquals(1, records["CNAME"]?.size)
         val cname = records["CNAME"]?.get(0) as ResourceRecord
         assertEquals("ftp", cname.name)
-        assertEquals("IN", cname.`class`)
+        assertEquals("IN", cname.recordClass)
         assertEquals("CNAME", cname.type)
         assertEquals("www", cname.data)
     }
