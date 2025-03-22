@@ -8,6 +8,10 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
+/**
+ * Test class for ZoneFileParser.
+ * Tests various DNS record types and parsing scenarios.
+ */
 class ZoneFileParserTest {
 
     @TempDir
@@ -16,12 +20,19 @@ class ZoneFileParserTest {
     private lateinit var testZoneFile: File
     private lateinit var parser: ZoneFileParser
 
+    /**
+     * Set up test environment before each test.
+     * Creates a temporary zone file and parser instance.
+     */
     @BeforeEach
     fun setup() {
         testZoneFile = File(tempDir, "test.zone")
         parser = ZoneFileParser()
     }
 
+    /**
+     * Test that a single-line SOA record is parsed correctly.
+     */
     @Test
     fun `test processBindFile parses SOA record correctly`() {
         testZoneFile.writeText("""
@@ -45,6 +56,10 @@ class ZoneFileParserTest {
         assertEquals("86400", soa.title)
     }
 
+    /**
+     * Test that a multi-line SOA record is parsed correctly,
+     * including handling comments within the record.
+     */
     @Test
     fun `test processBindFile parses multiple line SOA record correctly`() {
         testZoneFile.writeText("""
@@ -74,6 +89,9 @@ class ZoneFileParserTest {
         assertEquals(86400, soa.ttl)
     }
 
+    /**
+     * Test that NS records are parsed correctly.
+     */
     @Test
     fun `test processBindFile parses NS records correctly`() {
         testZoneFile.writeText("""
@@ -94,6 +112,9 @@ class ZoneFileParserTest {
         assertEquals("ns1.example.com.", ns1.data)
     }
 
+    /**
+     * Test that A records are parsed correctly.
+     */
     @Test
     fun `test processBindFile parses A records correctly`() {
         testZoneFile.writeText("""
@@ -114,6 +135,10 @@ class ZoneFileParserTest {
         assertEquals("192.168.1.1", www.data)
     }
 
+    /**
+     * Test that MX records are parsed correctly,
+     * including the preference field.
+     */
     @Test
     fun `test processBindFile parses MX records correctly`() {
         testZoneFile.writeText("""
@@ -135,6 +160,9 @@ class ZoneFileParserTest {
         assertEquals("10", mx1.preference)
     }
 
+    /**
+     * Test that CNAME records are parsed correctly.
+     */
     @Test
     fun `test processBindFile parses CNAME records correctly`() {
         testZoneFile.writeText("""
@@ -155,6 +183,10 @@ class ZoneFileParserTest {
         assertEquals("www", cname.data)
     }
 
+    /**
+     * Test that comments in zone files are handled correctly,
+     * both standalone comments and inline comments.
+     */
     @Test
     fun `test processBindFile handles comments correctly`() {
         testZoneFile.writeText("""
@@ -180,6 +212,10 @@ class ZoneFileParserTest {
         assertEquals("192.168.1.1", a.data)
     }
 
+    /**
+     * Test that TTL values specified in individual records
+     * are parsed correctly and take precedence over the default TTL.
+     */
     @Test
     fun `test processBindFile handles TTL in records correctly`() {
         testZoneFile.writeText("""

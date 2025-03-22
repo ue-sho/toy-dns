@@ -1,5 +1,15 @@
 package toy.dns.zone.parser
 
+/**
+ * Data class representing a DNS resource record.
+ *
+ * @property name The domain name this record applies to
+ * @property ttl Time to live value in seconds
+ * @property type The DNS record type (e.g. A, NS, MX, CNAME)
+ * @property data The record data (varies based on record type)
+ * @property recordClass The DNS class (usually IN for Internet)
+ * @property preference Priority value for MX records
+ */
 data class ResourceRecord(
     var name: String = "",
     var ttl: String = "",
@@ -13,19 +23,52 @@ data class ResourceRecord(
     }
 }
 
+/**
+ * Interface for DNS resource record parsers.
+ * Defines common functionality for all record type parsers.
+ */
 interface ResourceRecordParser {
     val recordType: String
 
+    /**
+     * Determines if a line contains a record of this parser's type.
+     *
+     * @param splittedLine List of strings representing a split line from a zone file
+     * @return true if the line contains this record type, false otherwise
+     */
     fun isMatch(splittedLine: List<String>): Boolean {
         return recordType in splittedLine
     }
 
+    /**
+     * Parses lines containing a resource record into a ResourceRecord object.
+     *
+     * @param lines List of split lines forming a resource record
+     * @param previousTtl The previously encountered TTL value, if any
+     * @param previousName The previously encountered domain name, if any
+     * @param origin The origin domain specified in the zone file
+     * @param ttl The default TTL value specified in the zone file
+     * @return A fully parsed ResourceRecord
+     */
     fun parse(lines: List<List<String>>, previousTtl: String? = null, previousName: String? = null, origin: String? = null, ttl: Int = 0): ResourceRecord
 }
 
+/**
+ * Parser for NS (Name Server) records in DNS zone files.
+ */
 class NsRecordParser: ResourceRecordParser {
     override val recordType = "NS"
 
+    /**
+     * Parses NS records into ResourceRecord objects.
+     *
+     * @param lines List of split lines forming an NS record
+     * @param previousTtl The previously encountered TTL value, if any
+     * @param previousName The previously encountered domain name, if any
+     * @param origin The origin domain specified in the zone file
+     * @param ttl The default TTL value specified in the zone file
+     * @return A ResourceRecord representing the NS record
+     */
     override fun parse(lines: List<List<String>>, previousTtl: String?, previousName: String?, origin: String?, ttl: Int): ResourceRecord {
         println("Processing NS record")
         if (lines.isEmpty()) {
@@ -36,9 +79,22 @@ class NsRecordParser: ResourceRecordParser {
     }
 }
 
+/**
+ * Parser for A (Address) records in DNS zone files.
+ */
 class ARecordParser: ResourceRecordParser {
     override val recordType = "A"
 
+    /**
+     * Parses A records into ResourceRecord objects.
+     *
+     * @param lines List of split lines forming an A record
+     * @param previousTtl The previously encountered TTL value, if any
+     * @param previousName The previously encountered domain name, if any
+     * @param origin The origin domain specified in the zone file
+     * @param ttl The default TTL value specified in the zone file
+     * @return A ResourceRecord representing the A record
+     */
     override fun parse(lines: List<List<String>>, previousTtl: String?, previousName: String?, origin: String?, ttl: Int): ResourceRecord {
         println("Processing A record")
         if (lines.isEmpty()) {
@@ -49,9 +105,22 @@ class ARecordParser: ResourceRecordParser {
     }
 }
 
+/**
+ * Parser for CNAME (Canonical Name) records in DNS zone files.
+ */
 class CnameRecordParser: ResourceRecordParser {
     override val recordType = "CNAME"
 
+    /**
+     * Parses CNAME records into ResourceRecord objects.
+     *
+     * @param lines List of split lines forming a CNAME record
+     * @param previousTtl The previously encountered TTL value, if any
+     * @param previousName The previously encountered domain name, if any
+     * @param origin The origin domain specified in the zone file
+     * @param ttl The default TTL value specified in the zone file
+     * @return A ResourceRecord representing the CNAME record
+     */
     override fun parse(lines: List<List<String>>, previousTtl: String?, previousName: String?, origin: String?, ttl: Int): ResourceRecord {
         println("Processing CNAME record")
         if (lines.isEmpty()) {
@@ -62,9 +131,22 @@ class CnameRecordParser: ResourceRecordParser {
     }
 }
 
+/**
+ * Parser for MX (Mail Exchange) records in DNS zone files.
+ */
 class MxRecordParser: ResourceRecordParser {
     override val recordType = "MX"
 
+    /**
+     * Parses MX records into ResourceRecord objects.
+     *
+     * @param lines List of split lines forming an MX record
+     * @param previousTtl The previously encountered TTL value, if any
+     * @param previousName The previously encountered domain name, if any
+     * @param origin The origin domain specified in the zone file
+     * @param ttl The default TTL value specified in the zone file
+     * @return A ResourceRecord representing the MX record
+     */
     override fun parse(lines: List<List<String>>, previousTtl: String?, previousName: String?, origin: String?, ttl: Int): ResourceRecord {
         println("Processing MX record")
         if (lines.isEmpty()) {
@@ -75,7 +157,13 @@ class MxRecordParser: ResourceRecordParser {
     }
 }
 
-
+/**
+ * Finds the index of the TTL value in a split line.
+ *
+ * @param splittedLine List of strings representing a split line from a zone file
+ * @param isMx Whether the line is for an MX record
+ * @return The index of the TTL value, or null if not found
+ */
 private fun findTtlIndex(splittedLine: List<String>, isMx: Boolean): Int? {
     val index = splittedLine.withIndex()
         .firstOrNull { (_, element) ->
@@ -85,6 +173,18 @@ private fun findTtlIndex(splittedLine: List<String>, isMx: Boolean): Int? {
     return index
 }
 
+/**
+ * Processes a DNS resource record line into a ResourceRecord object.
+ *
+ * @param splittedLine List of strings representing a split line from a zone file
+ * @param containsTtl Whether the line contains a TTL value
+ * @param previousTtl The previously encountered TTL value, if any
+ * @param previousName The previously encountered domain name, if any
+ * @param origin The origin domain specified in the zone file
+ * @param ttl The default TTL value specified in the zone file
+ * @param isMxType Whether the record is an MX record
+ * @return A processed ResourceRecord
+ */
 private fun processRr(
     splittedLine: List<String>,
     containsTtl: Boolean,

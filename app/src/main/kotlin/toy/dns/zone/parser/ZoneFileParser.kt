@@ -2,6 +2,10 @@ package toy.dns.zone.parser
 
 import java.io.File
 
+/**
+ * Parser for DNS zone files in BIND format.
+ * Supports parsing SOA, NS, A, CNAME, and MX records.
+ */
 class ZoneFileParser {
     private var ttl = 0
     private var origin = ""
@@ -14,6 +18,12 @@ class ZoneFileParser {
         MxRecordParser()
     )
 
+    /**
+     * Removes comments from a line and cleans it up.
+     *
+     * @param line The raw line from a zone file
+     * @return The cleaned line with comments removed
+     */
     private fun trimComment(line: String): String {
         var cleanedLine = line.trim()
             .replace("\t", " ")
@@ -36,6 +46,12 @@ class ZoneFileParser {
         return ""
     }
 
+    /**
+     * Processes a BIND format zone file and extracts DNS records.
+     *
+     * @param filePath Path to the zone file to process
+     * @return A map of record types to lists of parsed records
+     */
     fun processBindFile(filePath: String): Map<String, MutableList<Any>> {
         println("Starting to process file: $filePath")
         var previousTtl: String? = null
@@ -77,7 +93,7 @@ class ZoneFileParser {
                     }
                     "\$INCLUDE" -> println("Skipping INCLUDE directive")
                     else -> {
-                        // SOAレコードの検出
+                        // Detect SOA record
                         if (soaRecordParser.isMatch(splittedLine)) {
                             soaLines.add(splittedLine)
                             if (soaRecordParser.isLastLine(splittedLine)) {
