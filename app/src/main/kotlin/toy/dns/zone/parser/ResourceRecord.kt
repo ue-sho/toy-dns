@@ -94,7 +94,7 @@ private fun processRr(
     ttl: String?,
     isMxType: Boolean = false
 ): ResourceRecord {
-    println("Processing RR with line: ${splittedLine.joinToString(", ")}")
+    println("Processing Resource Record with line: ${splittedLine.joinToString(", ")}")
     println("Initial values - containsTtl: $containsTtl, previousTtl: $previousTtl, previousName: $previousName, origin: $origin, ttl: $ttl")
 
     var localContainsTtl = containsTtl
@@ -163,11 +163,7 @@ private fun processRr(
         }
     }
 
-    rr.name = when {
-        !localPreviousName.isNullOrEmpty() -> localPreviousName
-        !origin.isNullOrEmpty() -> origin
-        else -> ""
-    }
+    rr.name = localPreviousName ?: origin ?: ""
     rr.ttl = localPreviousTtl ?: ttl ?: ""
     println("Final record values - name: ${rr.name}, ttl: ${rr.ttl}")
 

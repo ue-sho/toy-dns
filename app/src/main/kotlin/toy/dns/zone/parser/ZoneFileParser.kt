@@ -77,37 +77,14 @@ class ZoneFileParser {
                     }
                     "\$INCLUDE" -> println("Skipping INCLUDE directive")
                     else -> {
-                        // マルチラインSOAの処理
-                        if (multiLineSoa) {
-                            soaLines.add(splittedLine)
-
-                            if (splittedLine.contains(")")) {
-                                // SOAレコードの終了を検出
-                                val soa = soaRecordParser.parse(soaLines, previousTtl, previousName, origin, ttl)
-                                previousName = soa.name
-                                records["SOA"]?.add(soa)
-
-                                // リセット
-                                multiLineSoa = false
-                                soaLines = mutableListOf()
-                                println("Completed multi-line SOA record")
-                            }
-                            return@forEach
-                        }
-
                         // SOAレコードの検出
                         if (soaRecordParser.isMatch(splittedLine)) {
                             soaLines.add(splittedLine)
-
-                            // 単一行SOAレコードの場合
-                            if (splittedLine.contains(")")) {
+                            if (soaRecordParser.isLastLine(splittedLine)) {
                                 val soa = soaRecordParser.parse(soaLines, previousTtl, previousName, origin, ttl)
                                 previousName = soa.name
                                 records["SOA"]?.add(soa)
                                 soaLines = mutableListOf()
-                            } else {
-                                // マルチラインSOAの開始
-                                multiLineSoa = true
                             }
                             return@forEach
                         }
