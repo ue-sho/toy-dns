@@ -29,6 +29,9 @@ dependencies {
 
     // This dependency is used by the application.
     implementation(libs.guava)
+
+    // Add kotlinx-coroutines for asynchronous programming
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -40,7 +43,7 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = "org.example.AppKt"
+    mainClass = "toy.dns.AppKt"
 }
 
 tasks.named<Test>("test") {
