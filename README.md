@@ -1,6 +1,6 @@
 # Toy DNS Server
 
-A simple DNS server implementation in Kotlin. This project is based on the Node.js implementation [engineerhead/dns-server](https://github.com/engineerhead/dns-server).
+A simple DNS server implementation in Kotlin. 
 
 ## Features
 
